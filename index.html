@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
+        <title>Space Slimes</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap-reboot.min.css"/>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <!-- used sound: https://freesound.org/people/Timbre/sounds/101355/ -->
+        <!-- used sound: https://freesound.org/people/SmiertSpionem/sounds/66233/ -->
+        <div class="body">
+            <div class="wrapper">
+                <div id="game-container">
+                    <div class="dialog" id="win-dialog" style="display:none;">
+                        <h1>You Win!</h1>
+                        <p>You reached 100 points. Great job!</p>
+                        <center><button onclick="window.location.reload(false);">Play again</button></center>
+                    </div>
+                    <div class="stars"></div>
+                    <div class="twinkling"></div>
+                    <div class="clouds"></div>
+                    <div class="game-info" style="display: none;">
+                        <span>3 + 3 = ?</span>
+                        <br/>
+                        <small>POINTS: 0</small>
+                    </div>
+                    <div id="slimes" class="slime-container">
+                    </div>
+                    <div id="aim-container" class="slime-container" style="display: none;">
+                        <div class="slime-column" id="aimer-container" data-column="0">
+                            <div id="aimer">
+                                <img class="rocket" src="rocket.svg"/>
+                                <div class="missile-container">
+                                    <img class="missile" src="ball.svg"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="option-screen">
+                        <h1>Space Slimes</h1>
+                        <span>Practice your math facts while saving the planet from the evil slimes!</span>
+                        <br/>
+                        <span>To get started, choose a facts category.</span>
+                        <br/>
+                        <div style="text-align: left;">
+                          <span>
+                            <input type="radio" id="facts-to-5" name="fact_type" value="5" checked>
+                            <label for="facts-to-5">Facts to 5</label>
+                          </span>
+                          <br/>
+                          <span>
+                            <input type="radio" id="facts-to-10" name="fact_type" value="10">
+                            <label for="facts-to-10">Facts to 10</label>
+                          </span>
+                        </div>
+                        <br/>
+                        <span>Next, choose what math operation you'd like to work on.</span>
+                        <div class="option-buttons">
+                          <button onclick="window.onchoosefn(event)">Add</button>
+                          <button onclick="window.onchoosefn(event)">Subtract</button>
+                          <button onclick="window.onchoosefn(event)">Multiply</button>
+                          <button onclick="window.onchoosefn(event)">Divide</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="howler.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
