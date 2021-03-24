@@ -43,7 +43,7 @@ window.generateMathQuestions = function(operation, maxResultSize) {
         isSubtractionLike = true;
     }
     leftMin = rightMin = 1;
-    leftMax = rightMax = (((maxResultSize+1) == 10) ? 9 : 5);
+    leftMax = rightMax = (((maxResultSize) == 10) ? 9 : 5);
     function isInt(value) {
         return !isNaN(value) && 
                parseInt(Number(value)) == value && 
