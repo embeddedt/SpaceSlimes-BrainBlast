@@ -49,17 +49,32 @@ window.generateMathQuestions = function(operation, maxResultSize) {
                parseInt(Number(value)) == value && 
                !isNaN(parseInt(value, 10));
     }
-    for(var left = leftMin; left <= leftMax; left++) {
-        for(var right = rightMin; right <= (isSubtractionLike ? left : rightMax); right++) {
-            if(isInt(getCorrectAnswer(left, right)))
-                window.mathQuestions.push([ left, right ]);
-            else {
-                console.log("Skipped: " + left + " " + right);
+    if(!isSubtractionLike) {
+        for(var left = leftMin; left <= leftMax; left++) {
+            for(var right = rightMin; right <= rightMax; right++) {
+                if(isInt(getCorrectAnswer(left, right))) {
+                    window.mathQuestions.push([ left, right ]);
+                } else {
+                    console.log("Skipped: " + left + " " + right);
+                }
+            }
+        }
+    } else {
+        for(var left = leftMin; left <= leftMax; left++) {
+            for(var right = rightMin; right <= rightMax; right++) {
+                var sum = left + right;
+                if(isInt(getCorrectAnswer(sum, left))) {
+                    window.mathQuestions.push([ sum, left ]);
+                } else {
+                    console.log("Skipped: " + sum + " " + right);
+                }
             }
         }
     }
+    
     if(window.mathQuestions.length == 0)
         throw new Error("No " + operation + " questions????");
+    window.mathQuestions.sort((a, b) => a[0] - b[0]);
     console.log(window.mathQuestions.slice());
     shuffle(window.mathQuestions);
 }
