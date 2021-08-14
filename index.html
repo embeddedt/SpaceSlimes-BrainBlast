@@ -41,37 +41,16 @@
                     </div>
                     <div id="option-screen">
                         <h1>Space Slimes</h1>
-                        <span>Practice your math facts while saving the planet from the evil slimes!</span>
+                        <span>Save the planet from the evil slimes!</span>
                         <br/>
                         <span>Use your arrow keys on a PC (left and right to change columns, up to shoot), or tap the slimes on a phone or tablet.</span>
                         <br/>
-                        <span>To get started, choose a facts category.</span>
-                        <br/>
-                        <div style="text-align: left;">
-                          <span>
-                            <input type="radio" id="facts-to-5" name="fact_type" value="5" checked>
-                            <label for="facts-to-5">Facts to 5</label>
-                          </span>
-                          <br/>
-                          <span>
-                            <input type="radio" id="facts-to-10" name="fact_type" value="10">
-                            <label for="facts-to-10">Facts to 10</label>
-                          </span>
-                        </div>
-                        <br/>
-                        <span>Next, choose what math operation you'd like to work on.</span>
-                        <div class="option-buttons">
-                          <button onclick="window.onchoosefn(event)">Add</button>
-                          <button onclick="window.onchoosefn(event)">Subtract</button>
-                          <button onclick="window.onchoosefn(event)">Multiply</button>
-                          <button onclick="window.onchoosefn(event)">Divide</button>
-                        </div>
+                        <button id="start-button" onclick="window.onchoosefn(event)" disabled="disabled">Play</button>
                     </div>
                 </div>
             </div>
         </div>
         <script src="howler.min.js"></script>
-        <script src="mathcore.js"></script>
         <script src="script.js"></script>
     </body>
 </html>

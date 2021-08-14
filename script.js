@@ -1,5 +1,43 @@
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+ function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+
+var brainBlastScript = getParameterByName("bbscript");
+
+if(brainBlastScript != null) {
+    var script = document.createElement("script");
+    var button = document.querySelector("#start-button");
+    script.addEventListener("load", function() {
+        shuffle(window.questions);
+        button.removeAttribute("disabled");
+    });
+    script.src = brainBlastScript;
+    document.head.appendChild(script);
+}
 
 window.onchoosefn = function(event) {
+    
     var NUM_COLUMNS = 5;
 
     var OFFSET_CUTOFF = 0.75;
@@ -25,6 +63,8 @@ window.onchoosefn = function(event) {
     var operation = event.currentTarget.textContent.toLowerCase();
     
     var currentCorrectAnswer;
+
+    var currentQuestionIndex = 0;
     
     
     var gameEnded = false;
@@ -51,23 +91,6 @@ window.onchoosefn = function(event) {
         src: ['rockets.wav']
     });
     
-    var maxResultSize = document.querySelector("#facts-to-5").checked ? 5 : 10;
-    if(isNaN(maxResultSize)) {
-        window.alert("need ?max to be a number");
-    }
-    window.maxResultSize = maxResultSize;
-    
-    window.generateMathQuestions(operation, maxResultSize);
-
-    function getParameterByName(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
     
     function getRandomIntInclusive(min, max) {
         min = Math.ceil(min);
@@ -101,6 +124,25 @@ window.onchoosefn = function(event) {
     function factors(number) {
         return Array.from(Array(number + 1), function(_, i) { return i }).filter(function(i) { return number % i === 0 });
     }
+
+    function getIncorrectAnswersForEpicQuestion() {
+        /*
+         * The following algorithm is really quite inefficient as it checks random questions every single time to find
+         * some random incorrect answers. However, it works well enough at this scale and is easy to understand.
+         */
+        /* It would be preferable to use a Set here, however, that is not supported in IE11 */
+        var incorrectAnswers = [];
+        do {
+            var idx = getRandomIntInclusive(0, window.questions.length - 1);
+            if(idx == currentQuestionIndex)
+                continue;
+            var value = window.questions[idx].question;
+            if(incorrectAnswers.indexOf(value) != -1)
+                continue;
+            incorrectAnswers.push(value);
+        } while(incorrectAnswers.length < 4);
+        return incorrectAnswers;
+    }
     
     function newQuestion(pointDelta, specificColumn) {
         if(typeof specificColumn != 'undefined') {
@@ -114,36 +156,24 @@ window.onchoosefn = function(event) {
             incorrectSound.play();
         else if(pointDelta > 0)
             correctSound.play();
-        if(points >= 100) {
+        if(points >= 100 || currentQuestionIndex >= window.questions.length) {
             gameEnded = true;
             document.getElementById("win-dialog").style.display = "";
             return;
         }
         var correctInitialColumn = getRandomIntInclusive(0, NUM_COLUMNS - 1);
-        /* MATH CORE BEGIN */
-        var firstFactor, secondFactor, symbol;
-        var retrievedQuestion = window.getNextMathQuestion();
-        firstFactor = retrievedQuestion.operands[0];
-        secondFactor = retrievedQuestion.operands[1];
-        symbol = window.mathSymbol;
-        currentCorrectAnswer = retrievedQuestion.currentCorrectAnswer;
-        
-        /* MATH CORE END */
-        document.querySelector(".game-info span").innerHTML = "" + firstFactor + " " + symbol + " " + secondFactor + " = " + "?";
+        var question = window.questions[currentQuestionIndex];
+        currentCorrectAnswer = window.questions[currentQuestionIndex].question;
+        document.querySelector(".game-info span").innerHTML = question.answers[0];
         document.querySelector(".game-info small").innerHTML = "POINTS: " + (points);
-        var incorrectAnswers = [];
-        for(var i = 0; i < (NUM_COLUMNS-1); i++) {
-            var value;
-            do {
-                value = getRandomIntInclusive(0, currentCorrectAnswer + 5);
-            } while(incorrectAnswers.indexOf(value) != -1 || value == currentCorrectAnswer);
-            incorrectAnswers.push(value);
-        }
+        var incorrectAnswers = getIncorrectAnswersForEpicQuestion();
+
         for(var i = 0; i < NUM_COLUMNS; i++) {
             regenerateColumn(i, i == correctInitialColumn ? currentCorrectAnswer : incorrectAnswers.pop());
             slimeColumns[i].isCorrect = i == correctInitialColumn;
         }
         updateColumnsPosition(false);
+        currentQuestionIndex++;
     }
     
     function fireMissile() {
@@ -228,7 +258,7 @@ window.onchoosefn = function(event) {
         slimeColumn.querySelector(".slime-img").addEventListener("click", onSlimeColumnClick);
         slimeColumn.setAttribute("data-column", i);
         slimeColumnContainer.appendChild(slimeColumn);
-        slimeColumns.push({ offset: 0, speed: (Math.random() / 2) + 0.5, column: slimeColumn });
+        slimeColumns.push({ offset: 0, speed: (Math.random() / 2) + 0.5 + (0.7*(Math.max(0, points)/100)), column: slimeColumn });
         // ---------
         if(i > 0) {
             slimeColumn = document.createElement("div");
