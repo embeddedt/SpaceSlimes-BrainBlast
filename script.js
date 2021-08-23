@@ -34,6 +34,8 @@ if(brainBlastScript != null) {
     });
     script.src = brainBlastScript;
     document.head.appendChild(script);
+} else {
+    window.alert("Please provide bbscript as a URL parameter");
 }
 
 window.onchoosefn = function(event) {
@@ -41,6 +43,8 @@ window.onchoosefn = function(event) {
     var NUM_COLUMNS = 5;
 
     var OFFSET_CUTOFF = 0.75;
+
+    var MIN_OFFSET = 0.15;
     
     var slimeColumnContainer = document.querySelector("#slimes");
     var aimContainer = document.querySelector("#aim-container");
@@ -107,7 +111,7 @@ window.onchoosefn = function(event) {
                     delta = performance.now() - prevMove;
                 }
                 prevMove = performance.now();
-                column.offset = column.offset + ((Math.random() * column.speed) / 1000);
+                column.offset = Math.max(MIN_OFFSET, column.offset + ((Math.random() * column.speed) / 1000));
                 if(column.offset >= OFFSET_CUTOFF) {
                     newQuestion(-5);
                 }
