@@ -42,7 +42,27 @@ html, body, #game-container {
     z-index: 1;
     box-sizing: border-box;
     overscroll-behavior: none;
+    font-size: 16px;
 }
+
+@media screen and (max-width: 1400px) {
+    html, body, #game-container {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    html, body, #game-container {
+        font-size: 9px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    html, body, #game-container {
+        font-size: 7px;
+    }
+}
+
 
 .body,
 .wrapper {
@@ -77,15 +97,22 @@ html, body, #game-container {
     flex-grow: 1;
     flex-shrink: 0;
     overflow: visible;
-    padding: 0 4vw;
+    padding: 0 1vw;
     will-change: transform;
 }
+@media screen and (min-width: 800px) {
+    .slime-column {
+        padding: 0 20px;
+    }
+}
+
 .slime-img {
     position: relative;
     transform: translateY(-100%);
     width: 100%;
     overflow: visible;
     cursor: pointer;
+    user-select: none;
 }
 .slime-img img {
     max-width: 100%;
@@ -98,6 +125,7 @@ html, body, #game-container {
     font-size: 2rem;
     color: white;
     transform: translate(-50%, -50%);
+    text-align: center;
 }
 .aimer {
     position: absolute;   
@@ -168,6 +196,8 @@ html, body, #game-container {
     left: 50%;
     color: white;
     transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 80rem;
 }
 .game-info span {
     font-size: 3rem;
@@ -247,6 +277,7 @@ h2 {
     padding: 1rem;
     align-items: center;
     overflow: auto;
+    font-size: 16px;
     z-index: 4;
 }
 #option-screen button, #option-screen input {
