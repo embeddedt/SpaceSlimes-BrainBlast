@@ -148,7 +148,9 @@ window.onchoosefn = function(event) {
         return incorrectAnswers;
     }
     
-    function newQuestion(pointDelta, specificColumn) {
+    function newQuestion(pointDelta, specificColumn, shouldAdvance) {
+        if(typeof shouldAdvance == 'undefined')
+            shouldAdvance = true;
         if(typeof specificColumn != 'undefined') {
             var booster = ((OFFSET_CUTOFF-slimeColumns[specificColumn].offset) / OFFSET_CUTOFF);
             if(booster < 0)
@@ -156,9 +158,12 @@ window.onchoosefn = function(event) {
             pointDelta = Math.round(pointDelta * booster);
         }
         points += pointDelta;
-        if(pointDelta < 0)
+        document.querySelector(".game-info small").innerHTML = "POINTS: " + (points);
+        if(pointDelta < 0) {
             incorrectSound.play();
-        else if(pointDelta > 0)
+            if(!shouldAdvance)
+                return; /* don't allow advancing to the next question */
+        } else if(pointDelta > 0)
             correctSound.play();
         if(points >= 100 || currentQuestionIndex >= window.questions.length) {
             gameEnded = true;
@@ -169,7 +174,6 @@ window.onchoosefn = function(event) {
         var question = window.questions[currentQuestionIndex];
         currentCorrectAnswer = window.questions[currentQuestionIndex].question;
         document.querySelector(".game-info span").innerHTML = question.answers[0];
-        document.querySelector(".game-info small").innerHTML = "POINTS: " + (points);
         var incorrectAnswers = getIncorrectAnswersForEpicQuestion();
 
         for(var i = 0; i < NUM_COLUMNS; i++) {
@@ -197,7 +201,7 @@ window.onchoosefn = function(event) {
                 if(offset >= ((1-slimeColumn.offset)-0.2)) {
                     missileFiring = false;
                     missile.style.display = "";
-                    newQuestion(slimeColumns[aimerColumn].isCorrect ? 5 : -5, aimerColumn);
+                    newQuestion(slimeColumns[aimerColumn].isCorrect ? 5 : -5, aimerColumn, false);
                     return;
                 }
                 requestAnimationFrame(missileHandler);
