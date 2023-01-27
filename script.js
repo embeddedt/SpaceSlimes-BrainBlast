@@ -39,13 +39,13 @@ if(brainBlastScript != null) {
 }
 
 window.onchoosefn = function(event) {
-    
+
     var NUM_COLUMNS = 5;
 
     var OFFSET_CUTOFF = 0.75;
 
     var MIN_OFFSET = 0.15;
-    
+
     var slimeColumnContainer = document.querySelector("#slimes");
     var aimContainer = document.querySelector("#aim-container");
     aimContainer.style.display = "";
@@ -53,55 +53,55 @@ window.onchoosefn = function(event) {
     document.querySelector("#option-screen").style.display = "none";
     /** @type {HTMLElement} */
     var aimerContainer = document.querySelector("#aimer-container");
-    
+
     var rocket = document.querySelector(".rocket");
-    
+
     var aimerColumn = 0;
-    
+
     var slimeColumns = [];
-    
+
     var missileFiring = false;
-    
+
     var missile = document.querySelector(".missile-container");
-    
+
     var operation = event.currentTarget.textContent.toLowerCase();
-    
+
     var currentCorrectAnswer;
 
     var currentQuestionIndex = 0;
-    
-    
+
+
     var gameEnded = false;
-    
+
     var queuedMissile = -1;
-    
+
     var points = 0;
-    
+
     var laserSound = new Howl({
         src: ['laser.wav']
     });
-    
+
     laserSound.load();
-    
+
     var incorrectSound = new Howl({
         src: ['incorrect.mp3']
     });
-    
+
     var correctSound = new Howl({
         src: ['correct.wav']
     });
-    
+
     var rocketSound = new Howl({
         src: ['rockets.wav']
     });
-    
-    
+
+
     function getRandomIntInclusive(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
     }
-    
+
     var prevMove = null;
     function updateColumnsPosition(move) {
         slimeColumns.forEach((column, i) => {
@@ -119,12 +119,12 @@ window.onchoosefn = function(event) {
             column.column.style.transform = "translateY(" + (column.offset * 100) + "%)";
         });
     }
-    
+
     function regenerateColumn(columnIndex, value) {
         slimeColumns[columnIndex].column.querySelector("span").innerHTML = value;
         slimeColumns[columnIndex].offset = 0;
     }
-    
+
     function factors(number) {
         return Array.from(Array(number + 1), function(_, i) { return i }).filter(function(i) { return number % i === 0 });
     }
@@ -144,10 +144,14 @@ window.onchoosefn = function(event) {
             if(incorrectAnswers.indexOf(value) != -1)
                 continue;
             incorrectAnswers.push(value);
-        } while(incorrectAnswers.length < 4);
+        } while(incorrectAnswers.length < Math.min(window.questions.length - 1, 4));
+        while(incorrectAnswers.length < 4) {
+            incorrectAnswers.push("");
+        }
+        shuffle(incorrectAnswers);
         return incorrectAnswers;
     }
-    
+
     function newQuestion(pointDelta, specificColumn, shouldAdvance) {
         if(typeof shouldAdvance == 'undefined')
             shouldAdvance = true;
@@ -183,7 +187,7 @@ window.onchoosefn = function(event) {
         updateColumnsPosition(false);
         currentQuestionIndex++;
     }
-    
+
     function fireMissile() {
         if(missileFiring)
             return;
@@ -229,9 +233,9 @@ window.onchoosefn = function(event) {
             }
         }
     });
-    
+
     rocket.addEventListener("click", fireMissile);
-    
+
     function onSlimeColumnClick(e) {
         if(queuedMissile != -1)
             return;
@@ -249,7 +253,7 @@ window.onchoosefn = function(event) {
             aimerContainer.style.transform = "translateX(" + (aimerColumn * 100) + "%)";
             rocketSound.play();
         }
-    
+
         if(e.currentTarget.classList.contains("slime-img")) {
             queuedMissile = setTimeout(function() {
                 fireMissile();
@@ -257,7 +261,7 @@ window.onchoosefn = function(event) {
             }, moving ? 500 : 0);
         }
     }
-    
+
     for(var i = 0; i < NUM_COLUMNS; i++) {
         var slimeColumn = document.createElement("div");
         slimeColumn.classList.add("slime-column");
@@ -275,8 +279,8 @@ window.onchoosefn = function(event) {
         }
     }
     newQuestion(0);
-    
-    
+
+
     setInterval(function() {
         if(document.visibilityState == 'visible' && !gameEnded)
             updateColumnsPosition(true);
